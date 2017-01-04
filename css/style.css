@@ -1,33 +1,12 @@
 body{
-	background-color: #4F4F4F;
+	position: relative;
 }
-#registpage
-{
-	width: 450px;
-	height:auto;
-	position:fixed;
-	margin-top: 15px;
-	background-color: #F0F0F0;
-	display: none;
-	padding: 20px;
-}
-#textarea
+textarea
 {
 	resize: none;
-	width: 410px;
-	height: 100px;
-	margin-top: 0px;
-	margin-left: 5px;
 }
 
-#radioform
-{
-	padding-left: 20px;
-}
-#ragistbtn{
-	width: 500px;
 
-}
 .paneltitle
 {		
 	width: auto;
@@ -35,27 +14,66 @@ body{
 	margin-bottom: 25px;
 }
 
-.guestpage
-{	position: fixed;
-	background-color:#FCFCFC;
-	width: auto;
-	height: auto;
-	margin-left:15px;
-	margin-top :50px;
-	border-radius: 50px;
+.edit-btn{
+	margin-top: -40px;
 }
-.guestpage img
-{
-	border-radius: 50px;
-	padding-bottom: 15px;
+.article-info{
+
+	margin-top: -20px;
+	margin-bottom: 15px;
 }
-.userpage
+.navbar-inverse
 {
-	position: fixed;
-	width: 275px;
-	margin-left:15px;
-	margin-top :50px;
-	border-radius: 50px;
-	background-color:#FCFCFC;
-	height: auto;
-}​
+	display: none;
+}
+#loginbtn
+{
+	cursor: pointer;
+}
+#copyright
+{
+	padding: 30px;
+	margin: 20px;
+}
+#registpage
+{
+	padding-top: 50px;
+}
+#article_page
+{
+	padding-top: 70px;
+	background-image: url("../img/background.jpg");
+}
+#sb_article
+{
+	
+}
+#resumepage
+{
+	padding-top: 70px;
+}
+img
+{
+	width: 100%;
+}
+.autobiography
+{
+	letter-spacing: 3px;
+}
+#piecespage
+{
+	padding-top: 70px;
+	background-color: #FFD2D2;
+}
+#postpage
+{
+	padding-top: 70px;
+}
+#idbtn
+{
+	display: none;
+}
+#menberpage
+{
+	padding-top: 70px;
+}

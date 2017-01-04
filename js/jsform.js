@@ -7,4 +7,4 @@
 
   // Restrict presentation length
  $('#presentation').restrictLength( $('#pres-max-length') );
- $('#area').restrictLength($('#maxlength'));
+ $('#the-textarea').restrictLength($('#max-length-element'));

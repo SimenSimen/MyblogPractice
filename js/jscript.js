@@ -4,10 +4,21 @@ $(document).ready(function(){
 	});
 
 	$('.close').on('click',function(){
-		$('#postpage').slideUp('slow');
+		$('.navbar-inverse').fadeOut('fast');
 	});
 
 	$('#postbtn').on('click',function(){
 		$('#postpage').fadeIn('fast');
+	});
+
+	$(this).on('click',function(){
+		if($('#collapse-nav').hasClass('in'))
+			{
+				$('.collapse').collapse('hide');
+			}
+	});
+
+	$("#loginbtn").on('click',function(){
+		$(".navbar-inverse").fadeToggle('fast');
 	});
 });

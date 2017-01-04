@@ -1,6 +1,6 @@
 <?php 
 @session_start();
-if (isset($_SESSION['Login']) && $_SESSION['Login'] == ture)
+if (!isset($_POST['article_id']))
 	{	
 		require 'db.php';
 		$public = $_POST['public'];
@@ -12,18 +12,34 @@ if (isset($_SESSION['Login']) && $_SESSION['Login'] == ture)
 		if ($query) 
 			{
 				mysqli_close($_SESSION['link']);
-				header("Location: http://localhost/myblog?post=true");		
+				header("Location: ../?post=true");		
 			}
 		else
 			{
 				mysqli_close($_SESSION['link']);
-				header("Location: http://localhost/myblog?post=false");
+				header("Location: ../?post=false");
 			}
 	}
-else
+elseif(isset($_POST['article_id']))
 	{
-		mysqli_close($_SESSION['link']);
-		header("Location: http://localhost/myblog");
+		require 'db.php';
+		$id = $_POST['article_id'];
+		$public = $_POST['public'];
+		$title =  $_POST['article_title'];
+		$content = $_POST['content'];
+		$user_id = $_SESSION['user_id'];
+		$sql = "UPDATE articles SET public = '{$public}' ,article_title= '{$title}' ,content = '{$content}' WHERE id ='{$id}'" ;
+		$query = mysqli_query($_SESSION['link'],$sql);
+		if ($query) 
+			{
+				mysqli_close($_SESSION['link']);
+				header("Location: ../?post=true");		
+			}
+		else
+			{
+				mysqli_close($_SESSION['link']);
+				header("Location: ../?post=false");
+			}	
 	}
 
 

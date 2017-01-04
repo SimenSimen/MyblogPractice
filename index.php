@@ -1,27 +1,6 @@
 <?php 
 @session_start();
- if(isset($_SESSION['Login']))
- {
-	$login = $_SESSION['Login'];
-	$nickname = $_SESSION['nickname'];
-	$gentle = $_SESSION['gentle'];
-	$intro = $_SESSION['intro'];
-	$user_id = $_SESSION['user_id'];
-	$signupdate = $_SESSION['signupdate'];
-	switch ($gentle) {
-		case 1:
-			$gentle = "男";
-			break;
-		
-		default:
-			$gentle = "女";
-			break;
-	}
- }
- else
-{
-	$login = false;
-}
+require_once('php/userlog.php');
 ?>
 <?php require_once'php/articles.php'; 
 $datas = get_publish_articles();
@@ -30,16 +9,14 @@ $datas = get_publish_articles();
 <html lang="zh-TW">
 <head>
 	<meta charset="UTF-8">
-	<title>My web</title>
-	<link rel="icon" href="img/icon.ico">
-	<!-- Latest compiled and minified CSS -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>My Blog</title>
+	<link rel="icon" href="img/icon.png">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 	<link rel="stylesheet" href="css/style.css">
 	<script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="  crossorigin="anonymous"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	<script src="js/jscript.js"></script>
 
 	<?php if(isset($_GET['fail']) || isset($_GET['post']) || isset($_GET['regist']))
@@ -72,216 +49,247 @@ $datas = get_publish_articles();
 	}
 ?>
 </head>
-<body>
-	<nav class="container-fluid">
-		<div class="row">
-			<div class="navbar navbar-default navbar-fixed-top">
-				<div class="nav">
-					<div class="col-xs-6 col-md-2 ">
-						<h2><p class="text-center">My Blog</p></h2>
-					</div>
-					<div class="visible-lg visible-md col-md-4">
-						<ul class="nav nav-pills" style="margin: 20px;">
-							<li role="presentation" class="active"><a href="#">文章發佈</a></li>
-	 					 	<li role="presentation"><a href="#">我的作品</a></li>
-	 					 	<li role="presentation"><a href="#">我的履歷</a></li>
-	 					 	<li role="presentation"><a href="#">關於My Blog</a></li>
-	 					 	<li role="presentation"><a href="recommand.php">給作者的話</a></li>
-						</ul>
-					</div>
-					<?php if($login) :?>
-					<div class="col-xs-6 col-md-4">
-						<p style="padding-top:10px;"><h3>歡迎回來 ,<?php echo $nickname ;?>!☆★☆★☆★☆★☆★☆★</h3></p>
-					</div>
-					<div class="col-xs-2 col-md-2">
-						<div style="margin-top: 20px">
-							<form action="php/login.php" method="POST">
-								<input type="submit" class="btn btn-default" name="logout" value="登出">
-							</form>
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
+	<?php require_once 'php/top_nav.php' ?>
+	<div id="article_page" class="container-fluid">
+		<div class="mid">
+			<div class="row">
+				<div class="col-xs-1 col-md-2">
+				</div>
+				<div class="col-xs-10 col-sm-10 col-md-8 col-lg-8">			
+				<?php if(!empty($datas) && !isset($_GET['post_id'])): ?>		
+					<?php foreach ($datas as $articles):?> 
+					<div class="panel panel-info" >
+  						<div class="panel-heading">
+  							<span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+  							<a href="?post_id=<?php echo $articles['id'];?>" ><span><?php echo $articles['article_title']; ?></span></a>
+  							<div class="paneltitle pull-right visible-lg-block">
+  								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+ 								<span class="label label-default">文章作者："<?php echo get_user_id($articles['user_id']);?>"</span>
+ 								<span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+ 								<span class="label label-warning">發佈時間：<?php echo $articles['create_date'] ;?></span>
+ 							</div>
+  						</div>
+  						<div class="panel-body">
+ 					<?php if(strlen($articles['content'])>300)
+ 						{
+ 							echo mb_substr($articles['content'],"0","300","UTF-8")."....";
+ 						}
+ 						else
+ 						{
+ 							echo $articles['content'];
+	 					}?>	   
+							<div class="pull-right hidden-lg">
+								<span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+								<span class="label label-warning">發佈時間：<?php echo $articles['create_date'];?></span>
+							</div>					  	
+						</div>  						
+					</div>			
+					<div class="container-fluid ">					
+					<?php if($login && $user_id == $articles['user_id']): ?>
+						<a type="button" class="btn btn-danger btn-xs edit-btn" href="editpage.php?post_id=<?php echo $articles['id'];?>"><span class="glyphicon glyphicon-pencil"></span> 文章編輯</a>
+					<?php endif; ?>
+						<div class="article-info hidden-lg pull-right">
+	  						<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+    						<span class="label label-default">文章作者："<?php echo get_user_id($articles['user_id']);?>"</span>					
 						</div>		
 					</div>
-					<?php elseif(!$login): ?>
-					<div class="visible-lg visible-md col-md-6">
-					 	<div style="margin-top: 15px;">
-							<form class="form-inline" action="php/login.php" method="POST" >
-  								<div class="form-group">
-    								<label class="sr-only" for="exampleInputEmail3">Account</label>
-    									<input type="text" class="form-control" id="exampleInputEmail3" placeholder="Account" name="account" data-validation="letternumeric" data-validation-error-msg=" " >
-  								</div>
-  							 	<div class="form-group">
-    								<label class="sr-only" for="exampleInputPassword3">Password</label>
-    									<input type="password" class="form-control " id="exampleInputPassword3" placeholder="Password" name="password" data-validation="letternumeric" data-validation-error-msg=" ">
-  								</div>
-  								<button style="margin-left: 150px;" type="submit" class="btn btn-default">登入</button>
-							</form>
+					<?php endforeach; ?>
+					<?php elseif(isset($_GET['post_id'])): ?>
+						<?php $sb_article = get_article($_GET['post_id']);?>
+					<div id="sb_article" class="panel panel-info" >
+  						<div class="panel-heading">
+  							<span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+  							<span><?php echo $sb_article['article_title']; ?></span>
+  							<div class="paneltitle pull-right visible-lg-block">
+  								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+    							<span class="label label-default">文章作者："<?php echo get_user_id($sb_article['user_id']);?>"</span>
+    							<span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+    							<span class="label label-warning">發佈時間：<?php echo $sb_article['create_date'];?></span>
+    						</div>
+  						</div>
+  						<div class="panel-body">
+    							<?php echo $sb_article['content']; ?>	  	
+						</div>  						
+					</div>	
+  				<?php endif; ?>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+		</div>
+	</div>
+	<nav class="navbar navbar-inverse navbar-fixed-bottom hidden-lg">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-10">		
+					<form class="navbar-form navbar-left" action="php/login.php" method="POST" >
+						<div class="form-group">
+							<label class="sr-only" for="">Account</label>
+							<input type="text" class="form-control input-sm"  placeholder="Account" name="account" data-validation="letternumeric" data-validation-error-msg=" " >
 						</div>
-						<div id="registbtn" class="label label-info" style="cursor:pointer;">註冊新帳號</div>
-						<div class='jumbotron' id='registpage' >
-							<div class="row">
-								<form class="form-horizontal" role="form" action="php/regist.php" method="POST">
-									<div class="form-group">
-										<div class ="col-xs-12">
-											<label for="inputHelpBlock">你的暱稱</label>			
-												<input type="text" class="form-control" id ="inputHelpBlock" aria-describedby="helpBlock" placeholder="2-8個字元" name="nickname" data-validation="letternumeric" data-validation-error-msg="請勿輸入特殊字元">
-										</div>
-									</div>
-									<div class ="form-group">
-										<div class ="col-xs-12">
-											<label for="inputHelpBlock">請輸入要申請的帳號：</label>			
-												<input type="text" class="form-control" id ="inputHelpBlock" aria-describedby="helpBlock" placeholder="8-20個英文字加數字" name="account" data-validation="length alphanumeric" data-validation-length="8-20" data-validation-error-msg="User name has to be an alphanumeric value (8-20 chars)">
-										</div>
-									</div>
-									<div class="form-group">
-										<div class ="col-xs-12">
-											<label for="inputHelpBlock">請輸入密碼：</label>			
-												<input type="password" class="form-control" id ="inputHelpBlock" aria-describedby="helpBlock" placeholder="6個以上英文字加數字" name="pass_confirmation" data-validation="strength" data-validation-strength="2" data-validation-length="min6">
-										</div>
-									</div>
-									<div class="form-group">
-										<div class ="col-xs-12">
-											<label for="inputHelpBlock">請再次輸入密碼：</label>
-												<input type="password" class="form-control" id ="inputHelpBlock" aria-describedby="helpBlock" placeholder="請再次輸入..." name = "pass" data-validation="confirmation">
-										</div>
-									</div>
-									<div class="form-group" id="radioform">
-										<div class="radio">
-											<label class="raido-inline">
-												<input type= "radio" name= "gentle" value="1" checked>男生
-											</label>			
-											<label class="raido-inline">
-												<input type= "radio" name= "gentle" value="0">女生
-											</label>
-										</div>		
-									</div>
-									<textarea  id="textarea" class="form-group" name="intro" rows="3" placeholder="請簡短的自我介紹…"></textarea>
-									<div><input type="submit" value="送出" class="btn btn-info"></div>	
-								</form>
-							</div>
+						<div class="form-group">
+							<label class="sr-only" for="">Password</label>
+							<input type="password" class="form-control input-sm"  placeholder="Password" name="password" data-validation="letternumeric" data-validation-error-msg=" ">
 						</div>
-					</div>
-					<?php endif; ?>
+						<button type="submit" class="btn btn-default btn-sm">登入</button>
+					</form>	
+				</div>
+				<div class="col-xs-2">
+					<button type="button" class="close"><span aria-hidden="true">&times;</span></button>
 				</div>
 			</div>
 		</div>
 	</nav>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>		
-	
-	<div class="container-fluid">
-		<div class="mid">
-			<div class="row">
-				<div class="col-md-3">
-					<?php if($login): ?>
-						<div class= "userpage" >
-   							<div class="thumbnail" style="margin-left: 37px; margin-top: 15px; border-radius: 50px; width: 200px ;height: 200px;">
-      							<img class="img-circle" src="img/userphoto.jpg" alt="...">
-   								<br />
-   								<br />					
-   							</div>
-   							<div style="margin-left: 37px; margin-top: 15px;">
-   								<p><span class="glyphicon glyphicon-user" aria-hidden="true"></span>暱稱：<span class="label label-default"><?php echo $nickname; ?></span></p>
-   								<p>性別：<span><?php echo $gentle; ?></span></p>
-   								<p>自我介紹：</p>
-   								<div style="overflow:hidden;text-overflow:ellipsis; width:auto;">
-									<p><?php echo $intro;?></p>
-   								</div>
-   								<button id="postbtn" class="btn btn-default btn-sm" style="margin:15px 0px 15px 65px;">發表文章</button>
-   								<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span><span class="label label-warning">註冊時間：<?php echo $signupdate;?></span></p>  		
-   							</div>
-						</div>
-					<?php elseif(!$login): ?>
-						<div class ="guestpage">
-							<img src="img/mrnobody.png" alt="mr.nobody">
-							<br/>
-							<span class="glyphicon glyphicon-search" aria-hidden="true" style="padding-left: 30px;"></span>
-							<span class="label label-danger">登入以發佈文章及顯示個人資訊</span>
-							<br>
-							<br>
-						</div>
-					<?php endif; ?>
+	<div id="resumepage" class="container-fluid">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="thumbnail">
+					<a href="contact.php" target="_blank">
+					<img src="img/photo.jpg">
+				<div class="caption">
+					<h2 class="text-center">劉子靖 / Simen</h2>
 				</div>
-				<div class="col-xs-8 col-md-6">
-				<?php if($login): ?>
-					<div class="jumbotron" id="postpage" style="display: none;padding: 50px;">
-						<div class="row">
-							<div id="closebtn">
-								<button type="button" class="close" data-dismiss="alert">
-									<span aria-hidden="true">&times;</span>
-									<span class="sr-only">Close</span>
-								</button>
-							</div>
-							<div>		
-								<p style="text-align: center; margin: 25px 0;"><span>文章發佈</span></p>
-								<form class="form-horizontal" role="form" action="php/post.php" method="POST">
-									<h3><span>文章標題：</span></h3>
-									<div style="margin: 50px 0 ;">
-										<input type="text" class="form-control input-sm" name="article_title" data-validation="length" data-validation-length="max25" data-validation-error-msg="請將標題控制在25字以內">
-									</div>
-									<h3><span>文章內容：</span></h3>
-									<div style=>
-						   				<p class="text-danger">還剩(<span id="maxlength">1000</span> 個字元)</p>
-										<textarea class="form-control" rows="17" id="area" style="resize: none;" name="content"></textarea>
-									</div>
-									<hr>
-									<div>
-										<button class="btn btn-default" type="submit" name = "public" value="1">發佈</button>
-										<button class="btn btn-default" type="submit" name = "public" value="0">儲存</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>	
-				<?php endif; ?>
-				<?php if(!empty($datas)): ?>
-					<?php foreach ($datas as $articles):?>
-					<div class="panel panel-info" style="margin-bottom: 0px;">
-  						<div class="panel-heading">
-  							<span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
-  							<span><?php echo $articles['article_title']; ?></span>
-  							<div class="paneltitle pull-right">
-  								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-    							<span class="label label-default">文章作者："<?php echo get_user_id($articles['user_id']);?>"</span>
-    							<span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-    							<span class="label label-warning">發佈時間：<?php echo $articles['create_date'] ;?></span>
-    						</div>
-  						</div>
-  						<div class="panel-body">
-    						<?php echo $articles['content']; ?>
-  						</div>  						
-  					</div>
-  					<?php if($login && $user_id == $articles['user_id']): ?>
-					<span class="label label-danger" style="cursor: pointer;">修改</span>
-					<?php endif; ?>
-  					<br/><br/>
-   					<?php endforeach; ?>
-  				<?php endif; ?>
-				</div>
-				<div class="col-md-3"></div>
-			</div>
-		</div>
-	</div>
+					  </a>
+					<p class="text-center">Learn by doing</p>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>基本資料 (待業中)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>生日</td>
+							<td><h3>1993/06/14</h3><small>雙子座</small></td>
+						</tr>
+						<tr>
+							<td>身高/體重</td>
+							<td><h3> 168 / 72 </h3><small>cm / kg</small></td>
+						</tr>
+						<tr>
+							<td>役期 / 婚姻</td>
+							<td><h3>2016/6/03役畢 / 未婚</h3><small>補充兵 </small></td>
+						</tr>
+						<tr>
+							<td>聯絡資訊</td>
+							<td><h3>FaceBook、Email</h3><small>decisiveboy20@hotmail.com.tw</small></td>
+						</tr>
 
-	<div class="container-fluid">
-		<div class="footer">
-			<div class="row">
-				<div class="col-md-3">				
+					</tbody>
+					</table>
 				</div>
-				<div class="col-xs-8 col-md-6" >
-			
-				</div>
-				<div class="col-md-3"></div>
+			</div>
+			<div class="col-md-4">
+				<h2>學經歷</h2>
+				<br>
+				<p>簡短自我介紹：我是一個簡單樸實，努力向學的人</p>
+				<table class="table table-hover">
+					<thead>
+					</thead>
+					<tbody>
+						<tr class="text-center">
+							<td>高中:</td>
+							<td><h3>國立大里高中</h3><small>2008/09~2011/06(中興大學附屬中學)</small></td>
+						</tr>
+						<tr class="text-center">
+							<td>大學:</td>
+							<td><h3>國立高雄應用科技大學</h3><small>2011/09~2016/01電機工程系畢業</small></td>
+						</tr>
+						<tr class="text-center">
+							<td>工作經歷:</td>
+							<td><h3>711門市人員</h3><small>2015/07~2016/06在學打工大約一年</small></td>
+						</tr>
+					</tbody>
+					</table>
+				<h2>專長、技能</h2>
+				<table class="table table-hover">
+					<thead>						
+					</thead>
+					<tbody>
+						<tr class="text-center">
+							<td>語文能力</td>
+							<td><h3>英文</h3><small>聽(中等)、說(中等)、讀(中等)、寫(中等)</small></td>
+						</tr>
+						<tr class="text-center">
+							<td>使用工具</td>
+							<td><h3>Windows,<code>Javascript、php、Html、css、jquery<code></h3></td>
+						</tr>
+						<tr class="text-center">
+							<td>資料輸入</td>
+							<td><h3>Office</h3><small>excel、word、powerpoint</small></td>
+						</tr>
+						<tr class="text-center">
+							<td>其他</td>
+							<td><h3>中文打字、英文打字</h3><small>80~120/m、20~50/m</small></td>
+						</tr>
+					</tbody>	
+				</table>
+				<h2>自傳</h2>
+				<table class="table table-hover">
+					<thead></thead>
+					<tbody>
+						<tr class="autobiography">
+							<td>中文自傳</td>
+							<td><h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我認為從小我就是一個樂觀、樸實簡約的人，學習能力快、反應迅速讓我不論是在課業還是娛樂上都得心應手。很小的時候我就是單親家庭，也因為如此，父親教導我獨立自主的能力，而這讓我成長的過程相當順利，遇到問題便有處理的能力。另外在求學過程中我也學會、了解到發問的重要性，所謂不恥下問更讓自己與時俱進，這也許是我學習能力強的原因。</h3></td>
+						</tr>
+					</tbody>	
+				</table>
+			</div>
+			<div class="col-md-4">
+				<table class="table table-hover">
+					<tbody>
+						<tr class="autobiography">
+						    <td></td>
+							<td><h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;也因為學習能力強，造就了本身一些不太好的習慣，例如：常常對某些稍微沒有難度的事情興趣缺缺、三分鐘熱度、沒有比較專精的技能。直到大學畢業我才稍微意識到自己的缺點。為了改正這個缺點，並且更努力的精進自己，我開始投入了程式設計的課程進行自學，一方面是因為對電腦軟體的興趣；二來是如果能將興趣當成職業發展，我相信我的能力、檔次能夠快速的進步。</h3><h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作為我學習能力的佐證大概可以提到在學期間再7-11打工的情況，不論是同事、老闆、以及公司區組幹部的評價，都是對我讚譽有加。以目前7-11所提供的服務來說，一個店員要學習至成熟大約要半年的時間，而我大概只花了兩個月。以及，一直至大學畢業以來，我從沒有進過補習班，比起同期的同班同學，學測拿到了63分的成績，雖說不是很理想，但是除了比較弱勢的科目(社會)，其他都有13級分以上。</h3><h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因此，不論是我的學習能力、工作態度、評價，都有相當的表現，我會盡力做好每一件事。</h3></td>
+						</tr>
+						<tr>
+							<td>英文自傳</td>
+							<td><h3>&nbsp;&nbsp;&nbsp;I'm optimistic,happy,showing lots of curiosity and a person learning well. I try my best to do everything and finish well. And I realize that if you got some problem or questions, you should just look for solutions or find the anwsers. This thought makes me be improving better and better.  <h3></td>
+						</tr>
+					</tbody>			
+				</table>
 			</div>
 		</div>
 	</div>
-	
-				
-					
-					
-					
-				
+	<div id="piecespage" class="container-fluid">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="thumbnail">
+					<a href="#" target="_blank">
+						<img src="img/piece1.png" class="img-thumbnail">
+						<div class="caption">
+							<h3><p class="text-center">My Blog</p></h3>
+						</div>
+					</a>
+				</div>
+			</div>
+		<?php for($i=0;$i<11;$i++): ?>
+			<div class="col-md-3">
+				<div class="thumbnail">
+					<a href="img/continue.png" target="_blank">
+						<img src="img/continue.png" class="img-thumbnail">
+						<div class="caption">
+							<h3><p class="text-center">To be continued</p></h3>
+						</div>
+					</a>
+				</div>
+			</div>
+		<?php endfor; ?>
+		</div>
+	</div>
+	<?php if(!$login):?>
+	<?php include_once('registpage.php'); ?> 
+	<?php elseif($login):?>
+	<?php include_once('postpage.php'); ?>
+	<?php endif; ?>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-3 col-xs-offset-5">
+				<div id="copyright">&copy;CopyRight <?php echo date('Y'); ?></div>
+			</div>
+		</div>
+	</div>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 	<script src="js/jsform.js"></script>
 </body>
 </html>

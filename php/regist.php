@@ -1,10 +1,10 @@
 <?php  
 @session_start();
 require_once "db.php" ;
-if(isset($_POST['account']) && isset($_POST["nickname"]) && isset($_POST['pass_confirmation']))
+if(isset($_POST['account']) && isset($_POST["nickname"]) && isset($_POST['password']))
 	{
 		$account = $_POST["account"];
-		$password = $_POST['pass_confirmation'];
+		$password = $_POST['password'];
 		$gentle  = $_POST["gentle"];
 		$nickname = $_POST["nickname"];
 		$intro = $_POST["intro"];
@@ -22,18 +22,18 @@ if(isset($_POST['account']) && isset($_POST["nickname"]) && isset($_POST['pass_c
 						$sql = "INSERT INTO merbers(account,password,gentle,nickname,intro) VALUES ('".$account."','".md5($password)."','".$gentle."','".$nickname."','".$intro."')";
 						$query = mysqli_query($_SESSION['link'], $sql );
 						mysqli_close($_SESSION['link']);
-						header("Location: http://localhost/myblog?regist=true");
+						header("Location: ../?regist=true");
 					}
 				else
 					{
 						mysqli_close($_SESSION['link']);
-						header("Location: http://localhost/myblog?regist=false");	
+						header("Location: ../?regist=false");	
 					}
 			}
 		else
 			{
 				mysqli_close($_SESSION['link']);
-				header("Location: http://localhost/myblog?regist=false");
+				header("Location: ../?regist=false");
 			}
 
 	}

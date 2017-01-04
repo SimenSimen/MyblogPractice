@@ -18,13 +18,13 @@ if(isset($_POST['account']) && isset($_POST['password']))
 		$_SESSION['signupdate'] = $row['signupdate'];
 		mysqli_free_result($result);	
 		mysqli_close($_SESSION['link']);	
-		header("Location: http://localhost/myblog");
-    	}
+		header("Location: ../");
+	 	}
 	else
 		{
 		mysqli_close($_SESSION['link']);
 
-		header("Location: http://localhost/myblog?fail=true");
+		header("Location: ../?fail=true");
 		}
 	}
 else
@@ -32,6 +32,6 @@ else
 	mysqli_close($_SESSION['link']);
 	session_unset();
 	session_destroy();
-	header("Location: http://localhost/myblog");
+	header("Location: ../");
 	}
  ?>
